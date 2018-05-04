@@ -18,9 +18,10 @@
   grid-column-gap: 25px;
   grid-row-gap: 25px;
   justify-content: center;
+  perspective: 600px;
 }
 .game__item {
-  background: linear-gradient(45deg, #22ab93 0%, #19668d 100%);
+  background: #fff;
   border: 5px solid #fff;
   border-radius: 9px;
   box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.5);
@@ -28,10 +29,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+.game__item:after,
+.game__item:before {
+  display: block;
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 5px;
+}
+.game__item:after {
+  background: linear-gradient(45deg, #22ab93 0%, #19668d 100%);
+  backface-visibility: hidden;
+}
+.game__item:before {
+  content: attr(data-emoji);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .game__item_type_open {
-  background: #f00;
-}
-.game__item:hover {
-  cursor: pointer;
+  transform: rotateY(180deg);
 }

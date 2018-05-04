@@ -1,10 +1,5 @@
-$bg = #cfd0cf
-$textColor = #434344
-$startGradient = #22ab93
-$endGradient = #19668d
-
 .game
-  background-color $bg
+  background-color #cfd0cf
   min-width 640px
   min-height 600px
   margin 0
@@ -14,7 +9,7 @@ $endGradient = #19668d
       text-align center
       margin 40px 0
       font 42px/47px Arial, sans-serif
-      color $textColor
+      color #434344
 
     &__body
       display: grid;
@@ -23,9 +18,10 @@ $endGradient = #19668d
       grid-column-gap: 25px;
       grid-row-gap: 25px;
       justify-content center
+      perspective 600px
 
     &__item
-      background: linear-gradient(45deg, #22ab93 0%,#19668d 100%)
+      background #fff
       border 5px solid #fff
       border-radius 9px
       box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.5)
@@ -33,9 +29,31 @@ $endGradient = #19668d
       display flex
       justify-content center
       align-items center
+      position: relative;
+      transition: transform .5s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+
+      &:after,
+      &:before
+        display block
+        content ''
+        position absolute
+        top 0
+        right 0
+        bottom 0
+        left 0
+        border-radius 5px
+
+      &:after
+        background: linear-gradient(45deg, #22ab93 0%,#19668d 100%)
+        backface-visibility: hidden;
+
+      &:before
+        content: attr(data-emoji)
+        display flex
+        align-items center
+        justify-content center
 
       &_type_open
-        background red
-
-      &:hover
-        cursor pointer
+        transform: rotateY(180deg);
