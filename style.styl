@@ -12,11 +12,11 @@
       color #434344
 
     &__body
-      display: grid;
-      grid-template-columns: 130px 130px 130px 130px;
-      grid-template-rows: 130px 130px 130px;
-      grid-column-gap: 25px;
-      grid-row-gap: 25px;
+      display grid
+      grid-template-columns 130px 130px 130px 130px
+      grid-template-rows 130px 130px 130px
+      grid-column-gap 25px
+      grid-row-gap 25px
       justify-content center
       perspective 600px
 
@@ -24,15 +24,15 @@
       background #fff
       border 5px solid #fff
       border-radius 9px
-      box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.5)
+      box-shadow 1px 1px 5px 0 rgba(0,0,0,0.5)
       font-size 75px
       display flex
       justify-content center
       align-items center
-      position: relative;
-      transition: transform .5s;
-      transform-style: preserve-3d;
-      cursor: pointer;
+      position relative
+      transition transform .5s
+      transform-style preserve-3d
+      cursor pointer
 
       &:after,
       &:before
@@ -46,14 +46,14 @@
         border-radius 5px
 
       &:after
-        background: linear-gradient(45deg, #22ab93 0%,#19668d 100%)
-        backface-visibility: hidden;
+        background linear-gradient(45deg, #22ab93 0%,#19668d 100%)
+        backface-visibility hidden
 
       &:before
-        content: attr(data-emoji)
+        content attr(data-emoji)
         display flex
         align-items center
         justify-content center
 
       &_type_open
-        transform: rotateY(180deg);
+        transform rotateY(180deg)
