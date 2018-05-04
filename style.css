@@ -1,3 +1,37 @@
-* {
-  box-sizing: border-box;
+.game {
+  background-color: #cfd0cf;
+  min-width: 640px;
+  min-height: 600px;
+  margin: 0;
+  padding: 0;
+}
+.game__header {
+  text-align: center;
+  margin: 40px 0;
+  font: 42px/47px Arial, sans-serif;
+  color: #434344;
+}
+.game__body {
+  display: grid;
+  grid-template-columns: 130px 130px 130px 130px;
+  grid-template-rows: 130px 130px 130px;
+  grid-column-gap: 25px;
+  grid-row-gap: 25px;
+  justify-content: center;
+}
+.game__item {
+  background: linear-gradient(45deg, #22ab93 0%, #19668d 100%);
+  border: 5px solid #fff;
+  border-radius: 9px;
+  box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.5);
+  font-size: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.game__item_type_open {
+  background: #f00;
+}
+.game__item:hover {
+  cursor: pointer;
 }

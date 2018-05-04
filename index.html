@@ -3,8 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Memoji</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
-<body>
-
+<body class="game">
+    <h1 class="game__header">Memoji</h1>
+    <section id="memoji" class="game__body">
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+        <article data-card class="game__item">🐶</article>
+    </section>
+    <!--🐶 🐱 🐭 🐹 🐰 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐙 🐵 🦄 🐞 🦀 🐟 🐊 🐓 🦃 🐿-->
+    <script>
+        memoji(document.getElementById("memoji"), "game__item_type_open")
+    </script>
 </body>
 </html>

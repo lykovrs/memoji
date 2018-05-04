@@ -1,2 +1,41 @@
-*
-  box-sizing border-box
+$bg = #cfd0cf
+$textColor = #434344
+$startGradient = #22ab93
+$endGradient = #19668d
+
+.game
+  background-color $bg
+  min-width 640px
+  min-height 600px
+  margin 0
+  padding 0
+
+  &__header
+      text-align center
+      margin 40px 0
+      font 42px/47px Arial, sans-serif
+      color $textColor
+
+    &__body
+      display: grid;
+      grid-template-columns: 130px 130px 130px 130px;
+      grid-template-rows: 130px 130px 130px;
+      grid-column-gap: 25px;
+      grid-row-gap: 25px;
+      justify-content center
+
+    &__item
+      background: linear-gradient(45deg, #22ab93 0%,#19668d 100%)
+      border 5px solid #fff
+      border-radius 9px
+      box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.5)
+      font-size 75px
+      display flex
+      justify-content center
+      align-items center
+
+      &_type_open
+        background red
+
+      &:hover
+        cursor pointer
