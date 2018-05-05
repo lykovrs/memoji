@@ -9,9 +9,13 @@
 <body class="game">
     <h1 class="game__header">Memoji</h1>
     <section id="memoji" class="game__body"></section>
-    <time>12-13</time>
+    <time id="timer" class="game__time">00-00</time>
     <script>
-        memoji(document.getElementById("memoji"), "game__item", "game__item_type_open")
+        var root = document.getElementById("memoji"),
+            timer = document.getElementById("timer"),
+            classCard = "game__item",
+            openCardClass = "game__item_type_open";
+        memoji(root, timer,  classCard, openCardClass, 3)
     </script>
 </body>
 </html>

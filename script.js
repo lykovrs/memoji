@@ -1,4 +1,4 @@
-function memoji(rootElement, classCard, openCardClass) {
+function memoji(rootElement, timerElement, classCard, openCardClass, timeRound) {
   var emojies = [
     "🦀",
     "🐟",
@@ -13,6 +13,8 @@ function memoji(rootElement, classCard, openCardClass) {
     "🦃",
     "🐿",
   ];
+  // Счетчик времени игры
+  var timeCounter = 0;
   // Создаем случайную последовательность эмоджи
   emojies = shuffle(emojies);
   // Готовим заготовку карточки
@@ -36,6 +38,16 @@ function memoji(rootElement, classCard, openCardClass) {
     }
   });
 
+  tick(
+    function() {
+      renderTime(timerElement, timeCounter);
+    },
+    function() {
+      console.log("ready!!!");
+    },
+    timeRound,
+  );
+
   /**
    * Функция перемешивания массива
    * @param array входной массив
@@ -56,5 +68,25 @@ function memoji(rootElement, classCard, openCardClass) {
     }
 
     return array;
+  }
+
+  /**
+   * Вызывает колбек каждую секунду
+   * @param iterationCallback колбек на кждую итерацию
+   * @param readyCallback колбек вызываемый после последней итерации
+   * @param iterations колличество итераций вызова
+   */
+  function tick(iterationCallback, readyCallback, iterations) {
+    setTimeout(function() {
+      timeCounter += 1;
+      iterationCallback();
+      if (timeCounter <= iterations)
+        tick(iterationCallback, readyCallback, iterations);
+      else readyCallback();
+    }, 1000);
+  }
+
+  function renderTime(element, time) {
+    element.innerHTML = "00-" + (+time < 10 ? "0" + time : time);
   }
 }
