@@ -6,21 +6,22 @@ function memoji(
   timeRound,
 ) {
   var emojies = [
-    { icon: "🦀", ready: false, id: 1 },
-    { icon: "🦀", ready: false, id: 2 },
-    { icon: "🐟", ready: false, id: 3 },
-    { icon: "🐟", ready: false, id: 4 },
-    { icon: "🐊", ready: false, id: 5 },
-    { icon: "🐊", ready: false, id: 6 },
-    { icon: "🐓", ready: false, id: 7 },
-    { icon: "🐓", ready: false, id: 8 },
-    { icon: "🦃", ready: false, id: 9 },
-    { icon: "🦃", ready: false, id: 10 },
-    { icon: "🐿", ready: false, id: 11 },
-    { icon: "🐿", ready: false, id: 12 },
+    { icon: "🦀", id: 1 },
+    { icon: "🦀", id: 2 },
+    { icon: "🐟", id: 3 },
+    { icon: "🐟", id: 4 },
+    { icon: "🐊", id: 5 },
+    { icon: "🐊", id: 6 },
+    { icon: "🐓", id: 7 },
+    { icon: "🐓", id: 8 },
+    { icon: "🦃", id: 9 },
+    { icon: "🦃", id: 10 },
+    { icon: "🐿", id: 11 },
+    { icon: "🐿", id: 12 },
   ];
   // Счетчик времени игры
   var timeCounter = 0;
+
   // Создаем случайную последовательность эмоджи
   emojies = shuffle(emojies);
   // Готовим заготовку карточки
@@ -28,11 +29,12 @@ function memoji(
   element.dataset.card = "";
   element.classList.add(classCard);
   // Добавляем рандомную последовательность карточек на страницу
-  emojies.forEach(function(item) {
+  var collection = emojies.map(function(item) {
     var newItem = element.cloneNode(false);
     newItem.dataset.emoji = item.icon;
     newItem.dataset.emojiId = item.id;
     rootElement.appendChild(newItem);
+    return newItem;
   });
   var prevControl = element;
   // делегируем клик
@@ -64,12 +66,16 @@ function memoji(
         control.dataset.ready = true;
         prevControl.dataset.ready = true;
         prevControl = element;
+
+        if(calculateResult(collection)) {
+            showModal("win", restartSession);
+        }
+
         return;
       }
 
-      console.log("result", calculateResult(emojies));
+      // сохраняем состояние
       prevControl = control;
-      // cardOpen(control, openCardClass)
     }
   });
 
@@ -79,9 +85,9 @@ function memoji(
       renderTime(timerElement, timeCounter);
     },
     function() {
-      console.log("ready!!!");
+      showModal("loose", restartSession);
     },
-    timeRound,
+    timeRound
   );
 
   /**
@@ -113,7 +119,7 @@ function memoji(
    * @param iterations колличество итераций вызова
    */
   function tick(iterationCallback, readyCallback, iterations) {
-    setTimeout(function() {
+      setTimeout(function() {
       timeCounter += 1;
       iterationCallback();
       if (timeCounter <= iterations)
@@ -122,25 +128,79 @@ function memoji(
     }, 1000);
   }
 
+  /**
+   * Отображает строку отсчета
+   * @param element элемент, содержимое которого обновляем
+   * @param time обновляемое значение
+   */
   function renderTime(element, time) {
     element.innerHTML = "00-" + (+time < 10 ? "0" + time : time);
   }
 
+  /**
+   * Показывает карточку
+   * @param card элемент карточки
+   * @param openCardClass добавляемы класс
+   */
   function cardOpen(card, openCardClass) {
     card.classList.add(openCardClass);
   }
 
+  /**
+   * Скрывает карточку
+   * @param card элемент карточки
+   * @param openCardClass удаляемый класс
+   */
   function cardClose(card, openCardClass) {
     card.classList.remove(openCardClass);
   }
 
-  // function makeMove(prevId, currentId) {
-  //
-  // }
-
+  /**
+   * Делает подсчет результата
+   * @param arr массив с дом-элементами
+   * @returns {boolean} результат игры
+   */
   function calculateResult(arr) {
     return arr.every(function(item) {
-      return item.ready;
+      return item.dataset.ready;
     });
+  }
+
+  /**
+   * Поднимает модальное окно
+   * @param text информирующий текст
+   * @param callback колбек клика по кнопке
+   */
+  function showModal(text, callback) {
+    var button = document.createElement("button");
+    button.classList.add("modal__action");
+    button.innerText = "Try again";
+    button.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      callback();
+    });
+
+    var message = document.createElement("h2");
+    message.classList.add("modal__message");
+    message.innerText = text;
+
+    var container = document.createElement("article");
+    container.classList.add("modal__container");
+
+    container.appendChild(message);
+    container.appendChild(button);
+
+    var overlay = document.createElement("div");
+    overlay.classList.add("modal");
+
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+  }
+
+  /**
+   * Запускает игру заново
+   */
+  function restartSession() {
+    window.location.reload();
   }
 }

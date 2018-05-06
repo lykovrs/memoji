@@ -10,6 +10,7 @@
   text-align: center;
   margin: 40px 0;
   font: 42px/47px Arial, sans-serif;
+  display: block;
 }
 .game__body {
   display: grid;
@@ -58,8 +59,32 @@
 .game__item_type_open {
   transform: rotateY(180deg);
 }
-.game__time {
-  display: block;
+.modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  min-height: inherit;
+  min-width: inherit;
+  display: flex;
+}
+.modal__container {
+  background: #fff;
+  padding: 70px;
   text-align: center;
+  min-width: 30%;
+}
+.modal__message {
+  font: 42px/47px Arial, sans-serif;
+}
+.modal__action {
+  border: none;
+  background: linear-gradient(45deg, #22ab93 0%, #19668d 100%);
+  color: #fff;
+  padding: 20px 40px;
   font: 42px/47px Arial, sans-serif;
 }
