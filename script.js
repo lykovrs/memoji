@@ -67,8 +67,8 @@ function memoji(
         prevControl.dataset.ready = true;
         prevControl = element;
 
-        if(calculateResult(collection)) {
-            showModal("win", restartSession);
+        if (calculateResult(collection)) {
+          showModal("win", restartSession);
         }
 
         return;
@@ -85,9 +85,11 @@ function memoji(
       renderTime(timerElement, timeCounter);
     },
     function() {
-      showModal("loose", restartSession);
+      if (!calculateResult(collection)) {
+        showModal("loose", restartSession);
+      }
     },
-    timeRound
+    timeRound,
   );
 
   /**
@@ -119,7 +121,7 @@ function memoji(
    * @param iterations колличество итераций вызова
    */
   function tick(iterationCallback, readyCallback, iterations) {
-      setTimeout(function() {
+    setTimeout(function() {
       timeCounter += 1;
       iterationCallback();
       if (timeCounter <= iterations)
