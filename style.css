@@ -68,7 +68,7 @@
   left: 0;
   min-height: inherit;
   min-width: inherit;
-  position: fixed;
+  position: absolute;
   right: 0;
   top: 0;
 }

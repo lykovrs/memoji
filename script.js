@@ -132,7 +132,7 @@ function memoji(
     setTimeout(function() {
       timeCounter += 1;
       iterationCallback();
-      if (timeCounter <= iterations)
+      if (timeCounter < iterations)
         tick(iterationCallback, readyCallback, iterations);
       else readyCallback();
     }, 1000);
