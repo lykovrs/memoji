@@ -48,11 +48,19 @@ function memoji(
       var prevId = prevControl.dataset.emojiId;
       var prevIcon = prevControl.dataset.emoji;
 
-      // если пара уже открыт пропускаем
+      // если пара уже открыта пропускаем
       if ("ready" in control.dataset) return;
 
       // обрабатываем клик по одной и той же карточке
-      if (prevId === currentId) return;
+      if (prevId === currentId) {
+        if (control.classList.contains(openCardClass)) {
+          cardClose(control, openCardClass);
+          prevControl = element;
+        } else {
+          cardOpen(control, openCardClass);
+        }
+        return;
+      }
 
       // клик по разным карточкам с разнымим иконками
       if (currentIcon !== prevIcon) {
