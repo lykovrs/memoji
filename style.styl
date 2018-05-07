@@ -57,7 +57,6 @@
 
       &_type_open
         transform rotateY(180deg)
-//TODO: Поправить стили(шрифт)
 
 .modal
   align-items center
@@ -79,7 +78,17 @@
     text-align center
 
   &__message
-    font 42px/47px Arial, sans-serif
+    font bold 47px/47px Arial, sans-serif
+    & span
+      display inline-block
+    & span:nth-child(1)
+      text-transform uppercase
+    & span:nth-child(2)
+      transform translateY(-5px)
+    & span:nth-child(3)
+      transform translateY(-7px)
+    & span:nth-child(4)
+      transform translateY(-9px)
 
   &__action
     background linear-gradient(45deg, #19668d 0%, #22ab93 100%)

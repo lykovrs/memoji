@@ -94,7 +94,7 @@ function memoji(
     },
     function() {
       if (!calculateResult(collection)) {
-        showModal("loose", restartSession);
+        showModal("lose", restartSession);
       }
     },
     timeRound,
@@ -190,9 +190,13 @@ function memoji(
       callback();
     });
 
+    var decorationText = text.split('').reduce(function (previousValue, currentValue) {
+        return previousValue + '<span>' + currentValue + '</span>'
+    }, '');
+
     var message = document.createElement("h2");
     message.classList.add("modal__message");
-    message.innerText = text;
+    message.innerHTML = decorationText;
 
     var container = document.createElement("article");
     container.classList.add("modal__container");
