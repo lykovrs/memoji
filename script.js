@@ -5,20 +5,20 @@ function memoji(
   openCardClass,
   timeRound,
 ) {
-  var emojies = [
-    { icon: "🦀", id: 1 },
-    { icon: "🦀", id: 2 },
-    { icon: "🐟", id: 3 },
-    { icon: "🐟", id: 4 },
-    { icon: "🐊", id: 5 },
-    { icon: "🐊", id: 6 },
-    { icon: "🐓", id: 7 },
-    { icon: "🐓", id: 8 },
-    { icon: "🦃", id: 9 },
-    { icon: "🦃", id: 10 },
-    { icon: "🐿", id: 11 },
-    { icon: "🐿", id: 12 },
-  ];
+
+  // генерируем пары
+  var emojies = ["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"].reduce(function(
+    previousValue,
+    currentValue,
+    currentIndex,
+  ) {
+    return previousValue.concat([
+      { icon: currentValue, id: "first-" + currentIndex },
+      { icon: currentValue, id: "second-" + currentIndex },
+    ]);
+  },
+  []);
+
   // Счетчик времени игры
   var timeCounter = 0;
 
@@ -190,9 +190,11 @@ function memoji(
       callback();
     });
 
-    var decorationText = text.split('').reduce(function (previousValue, currentValue) {
-        return previousValue + '<span>' + currentValue + '</span>'
-    }, '');
+    var decorationText = text
+      .split("")
+      .reduce(function(previousValue, currentValue) {
+        return previousValue + "<span>" + currentValue + "</span>";
+      }, "");
 
     var message = document.createElement("h2");
     message.classList.add("modal__message");
