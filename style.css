@@ -59,6 +59,17 @@
 .game__item_type_open {
   transform: rotateY(180deg);
 }
+.game__item_round_success {
+  background-color: #5ad66f;
+  border-color: #5ad66f;
+  cursor: auto;
+  transition: background-color 1s, border-color 1s;
+}
+.game__item_round_error {
+  background-color: #f44336;
+  border-color: #f44336;
+  transition: background-color 1s, border-color 1s;
+}
 .modal {
   align-items: center;
   background: rgba(0,0,0,0.5);

@@ -12,11 +12,17 @@
     <time id="timer" class="game__header">00-00</time>
 
     <script>
-        var root = document.getElementById("memoji"),
-            timer = document.getElementById("timer"),
-            classCard = "game__item",
-            openCardClass = "game__item_type_open";
-        memoji(root, timer,  classCard, openCardClass, 60)
+        var opt = {
+            rootElement: document.getElementById("memoji"),
+            timerElement: document.getElementById("timer"),
+            classCard: "game__item",
+            openCardClass: "game__item_type_open",
+            timeRound: 60,
+            roundSuccessClass: "game__item_round_success",
+            roundErrorClass: "game__item_round_error",
+        };
+        // memoji(opt)
+        new Game(opt)
     </script>
 </body>
 </html>

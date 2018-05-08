@@ -1,222 +1,206 @@
-function memoji(
-  rootElement,
-  timerElement,
-  classCard,
-  openCardClass,
-  timeRound,
-) {
-
+function Game(options) {
   // генерируем пары
-  var emojies = ["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"].reduce(function(
-    previousValue,
-    currentValue,
-    currentIndex,
-  ) {
-    return previousValue.concat([
-      { icon: currentValue, id: "first-" + currentIndex },
-      { icon: currentValue, id: "second-" + currentIndex },
-    ]);
-  },
-  []);
-
+  this._emojies = this.generateCouple(["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"]);
   // Счетчик времени игры
-  var timeCounter = 0;
-
-  // Создаем случайную последовательность эмоджи
-  emojies = shuffle(emojies);
-  // Готовим заготовку карточки
-  var element = document.createElement("article");
-  element.dataset.card = "";
-  element.classList.add(classCard);
+  this._timeCounter = 0;
+  // Перемешиваем массив
+  this.mixCards(this._emojies);
   // Добавляем рандомную последовательность карточек на страницу
-  var collection = emojies.map(function(item) {
-    var newItem = element.cloneNode(false);
-    newItem.dataset.emoji = item.icon;
-    newItem.dataset.emojiId = item.id;
-    rootElement.appendChild(newItem);
-    return newItem;
+  this._collection = this._emojies.map(function(item) {
+    var element = document.createElement("article");
+    element.dataset.card = "";
+    element.classList.add(options.classCard);
+    element.dataset.emoji = item.icon;
+    element.dataset.emojiId = item.id;
+    options.rootElement.appendChild(element);
+    return element;
   });
-  var prevControl = element;
+  // для принятия решения нужно знать хотябы последне три корректных хода
+  this._history = {
+    first: null,
+    second: null,
+    third: null,
+  };
+
   // делегируем клик
-  rootElement.addEventListener("click", function(ev) {
-    var control = ev.target;
+  options.rootElement.addEventListener(
+    "click",
+    function(ev) {
+      var history = this._history;
+      // выбираем только целевый элементы-карточки
+      if ("card" in ev.target.dataset) {
+        var control = ev.target;
+        var id = control.dataset.emojiId;
 
-    // выбираем только целевый элементы-карточки
-    if ("card" in control.dataset) {
-      var currentId = control.dataset.emojiId;
-      var currentIcon = control.dataset.emoji;
-      var prevId = prevControl.dataset.emojiId;
-      var prevIcon = prevControl.dataset.emoji;
+        // если карта отыграна, не  реагируем на клик
+        if (control.classList.contains(options.roundSuccessClass)) return;
 
-      // если пара уже открыта пропускаем
-      if ("ready" in control.dataset) return;
+        // повторынй клик по одной из открытых карт
+        if (control === history.first || control === history.second) {
+          // закрываем крату
+          this.cardClose(control, options.openCardClass);
+          // обновляем очередь
+          if (control === history.first) {
+            // убираем подсветку первого кондрола
+            history.first.classList.remove(options.roundErrorClass);
 
-      // обрабатываем клик по одной и той же карточке
-      if (prevId === currentId) {
-        if (control.classList.contains(openCardClass)) {
-          cardClose(control, openCardClass);
-          prevControl = element;
-        } else {
-          cardOpen(control, openCardClass);
+            if (history.second) {
+              // убираем подсветку второго контрола
+              history.second.classList.remove(options.roundErrorClass);
+              history.first = history.second;
+              history.second = null;
+            } else {
+              history.first = null;
+            }
+          }
+
+          if (control === history.second) {
+            // убираем подсветку
+            history.first.classList.remove(options.roundErrorClass);
+            history.second.classList.remove(options.roundErrorClass);
+            history.second = null;
+          }
+          return;
         }
-        return;
-      }
 
-      // клик по разным карточкам с разнымим иконками
-      if (currentIcon !== prevIcon) {
-        cardClose(prevControl, openCardClass);
-        cardOpen(control, openCardClass);
-      }
-
-      // клик по разным карточкам с одинаковой иконкой
-      if (currentIcon === prevIcon) {
-        cardOpen(control, openCardClass);
-        control.dataset.ready = true;
-        prevControl.dataset.ready = true;
-        prevControl = element;
-
-        if (calculateResult(collection)) {
-          showModal("win", restartSession);
+        // если очередь полна
+        if (history.first && history.second) {
+          // закрываем карточки, если проверка не пройдена и удаляем подсветку
+          if (
+            !this.calculateMove(
+              history.first.dataset.emojiId,
+              history.second.dataset.emojiId,
+            )
+          ) {
+            history.first.classList.remove(options.roundErrorClass);
+            history.second.classList.remove(options.roundErrorClass);
+            this.cardClose(history.first, options.openCardClass);
+            this.cardClose(history.second, options.openCardClass);
+          }
+          // чистим очередь
+          history.first = null;
+          history.second = null;
         }
 
-        return;
-      }
+        // Если очередь пуста
+        if (!history.first && !history.second) {
+          // сохораняем первый клик
+          history.first = control;
+          // открываем карточку
+          this.cardOpen(control, options.openCardClass);
+          return;
+        }
 
-      // сохраняем состояние
-      prevControl = control;
-    }
+        if (history.first && !history.second) {
+          // сохранение клика второго значения
+          history.second = control;
+          // открываем карточку
+          this.cardOpen(control, options.openCardClass);
+          // проверка валидации и присвоение класса
+          if (
+            this.calculateMove(
+              history.first.dataset.emojiId,
+              history.second.dataset.emojiId,
+            )
+          ) {
+            // подсвечиваем успех
+            history.first.classList.add(options.roundSuccessClass);
+            history.second.classList.add(options.roundSuccessClass);
+          } else {
+            // подсвечиваем ошибку
+            history.first.classList.add(options.roundErrorClass);
+            history.second.classList.add(options.roundErrorClass);
+          }
+          return;
+        }
+
+        console.log(history);
+      }
+    }.bind(this),
+  );
+}
+
+/**
+ * Вчисляет разницу между двумя объектами с разными id
+ * @param firsId id первого объекта
+ * @param secondId id второго объекта
+ * @returns {boolean}
+ */
+Game.prototype.calculateMove = function(firsId, secondId) {
+  var currentEmojies = this._emojies.filter(function(item) {
+    return item.id === firsId || item.id == secondId;
   });
 
-  // начинаем отсчет раунда игры
-  tick(
-    function() {
-      renderTime(timerElement, timeCounter);
-    },
-    function() {
-      if (!calculateResult(collection)) {
-        showModal("lose", restartSession);
-      }
-    },
-    timeRound,
-  );
-
-  /**
-   * Функция перемешивания массива
-   * @param array входной массив
-   * @returns {*}
-   */
-  function shuffle(array) {
-    var currentIndex = array.length,
-      temporaryValue,
-      randomIndex;
-
-    while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-
-    return array;
+  if (currentEmojies.length === 2) {
+    var firsIcon = currentEmojies[0].icon;
+    var secondIcon = currentEmojies[1].icon;
+    return firsIcon === secondIcon && firsId !== secondId;
   }
 
-  /**
-   * Вызывает колбек каждую секунду
-   * @param iterationCallback колбек на кждую итерацию
-   * @param readyCallback колбек вызываемый после последней итерации
-   * @param iterations колличество итераций вызова
-   */
-  function tick(iterationCallback, readyCallback, iterations) {
-    setTimeout(function() {
-      timeCounter += 1;
-      iterationCallback();
-      if (timeCounter < iterations)
-        tick(iterationCallback, readyCallback, iterations);
-      else readyCallback();
-    }, 1000);
+  return false;
+};
+
+/**
+ * Генерирует моссив с парами объектов для игры
+ * @param arr массив строк с эмоджи
+ * @returns {*} массив объектов Emoji
+ */
+Game.prototype.generateCouple = function(arr) {
+  return arr.reduce(function(previousValue, currentValue, currentIndex) {
+    return previousValue.concat([
+      new Emoji(currentValue, "first-" + currentIndex),
+      new Emoji(currentValue, "second-" + currentIndex),
+    ]);
+  }, []);
+};
+
+/**
+ * Функция перемешивания массива
+ * @param array входной массив
+ * @returns {*}
+ */
+Game.prototype.mixCards = function(array) {
+  var currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
   }
 
-  /**
-   * Отображает строку отсчета
-   * @param element элемент, содержимое которого обновляем
-   * @param time обновляемое значение
-   */
-  function renderTime(element, time) {
-    element.innerHTML = "00-" + (+time < 10 ? "0" + time : time);
-  }
+  return array;
+};
 
-  /**
-   * Показывает карточку
-   * @param card элемент карточки
-   * @param openCardClass добавляемы класс
-   */
-  function cardOpen(card, openCardClass) {
-    card.classList.add(openCardClass);
-  }
+/**
+ * Показывает карточку
+ * @param card элемент карточки
+ * @param openCardClass добавляемы класс
+ */
+Game.prototype.cardOpen = function(card, openCardClass) {
+  card.classList.add(openCardClass);
+};
 
-  /**
-   * Скрывает карточку
-   * @param card элемент карточки
-   * @param openCardClass удаляемый класс
-   */
-  function cardClose(card, openCardClass) {
-    card.classList.remove(openCardClass);
-  }
+/**
+ * Скрывает карточку
+ * @param card элемент карточки
+ * @param openCardClass удаляемый класс
+ */
+Game.prototype.cardClose = function(card, openCardClass) {
+  card.classList.remove(openCardClass);
+};
 
-  /**
-   * Делает подсчет результата
-   * @param arr массив с дом-элементами
-   * @returns {boolean} результат игры
-   */
-  function calculateResult(arr) {
-    return arr.every(function(item) {
-      return item.dataset.ready;
-    });
-  }
-
-  /**
-   * Поднимает модальное окно
-   * @param text информирующий текст
-   * @param callback колбек клика по кнопке
-   */
-  function showModal(text, callback) {
-    var button = document.createElement("button");
-    button.classList.add("modal__action");
-    button.innerText = "Try again";
-    button.addEventListener("click", function(ev) {
-      ev.preventDefault();
-      callback();
-    });
-
-    var decorationText = text
-      .split("")
-      .reduce(function(previousValue, currentValue) {
-        return previousValue + "<span>" + currentValue + "</span>";
-      }, "");
-
-    var message = document.createElement("h2");
-    message.classList.add("modal__message");
-    message.innerHTML = decorationText;
-
-    var container = document.createElement("article");
-    container.classList.add("modal__container");
-
-    container.appendChild(message);
-    container.appendChild(button);
-
-    var overlay = document.createElement("div");
-    overlay.classList.add("modal");
-
-    overlay.appendChild(container);
-    document.body.appendChild(overlay);
-  }
-
-  /**
-   * Запускает игру заново
-   */
-  function restartSession() {
-    window.location.reload();
-  }
+/**
+ * Конструктор сущьности Emoji
+ * @param icon строка-иконка
+ * @param id идентивикатор
+ * @constructor
+ */
+function Emoji(icon, id) {
+  this.icon = icon;
+  this.id = id;
 }
