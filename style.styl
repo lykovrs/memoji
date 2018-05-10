@@ -7,71 +7,78 @@
   padding 0
 
   &__header
+    display block
+    font 42px / 47px Arial, sans-serif
+    margin 40px 0
+    text-align center
+  &__body
+    display grid
+    grid-column-gap 25px
+    grid-row-gap 25px
+    grid-template-columns 130px 130px 130px 130px
+    grid-template-rows 130px 130px 130px
+    justify-content center
+    perspective 600px
+
+  &__item
+    align-items center
+    background #fff
+    border 5px solid #fff
+    border-radius 9px
+    box-shadow 1px 1px 5px 0 rgba(0, 0, 0, 0.5)
+    cursor pointer
+    display flex
+    font-size 75px
+    justify-content center
+    position relative
+    transform-style preserve-3d
+    transition transform .5s
+
+    &:after,
+    &:before
+      border-radius 5px
+      bottom 0
+      content ''
       display block
-      font 42px/47px Arial, sans-serif
-      margin 40px 0
-      text-align center
-    &__body
-      display grid
-      grid-column-gap 25px
-      grid-row-gap 25px
-      grid-template-columns 130px 130px 130px 130px
-      grid-template-rows 130px 130px 130px
-      justify-content center
-      perspective 600px
+      left 0
+      position absolute
+      right 0
+      top 0
 
-    &__item
+    &:after
+      backface-visibility hidden
+      background linear-gradient(45deg, #22ab93 0%, #19668d 100%)
+
+    &:before
       align-items center
-      background #fff
-      border 5px solid #fff
-      border-radius 9px
-      box-shadow 1px 1px 5px 0 rgba(0,0,0,0.5)
-      cursor pointer
+      content attr(data-emoji)
       display flex
-      font-size 75px
       justify-content center
-      position relative
-      transform-style preserve-3d
-      transition transform .5s
 
-      &:after,
-      &:before
-        border-radius 5px
-        bottom 0
-        content ''
-        display block
-        left 0
-        position absolute
-        right 0
-        top 0
+    &_type_open
+      transform rotateY(180deg)
 
-      &:after
-        backface-visibility hidden
-        background linear-gradient(45deg, #22ab93 0%,#19668d 100%)
+    &_round_success
+      background-color #5ad66f
+      border-color #5ad66f
+      cursor auto
+      transition background-color 1s, border-color 1s
+    &_round_error
+      background-color #f44336
+      border-color #f44336
+      transition background-color 1s, border-color 1s
 
-      &:before
-        align-items center
-        content attr(data-emoji)
-        display flex
-        justify-content center
+  &__timer
+    display block
+    font 32px / 36px Arial, sans-serif
+    margin-top 30px
+    text-align center
 
-      &_type_open
-        transform rotateY(180deg)
-
-      &_round_success
-        background-color #5ad66f
-        border-color #5ad66f
-        cursor auto
-        transition background-color 1s, border-color 1s
-      &_round_error
-        background-color #f44336
-        border-color #f44336
-        transition background-color 1s, border-color 1s
 .modal
   align-items center
   background rgba(#000, .5)
   bottom 0
-  display flex
+  display none
   justify-content center
   left 0
   min-height inherit
@@ -80,6 +87,9 @@
   right 0
   top 0
 
+  &_type_open
+    display flex
+
   &__container
     background #fff
     min-width 30%
@@ -87,7 +97,7 @@
     text-align center
 
   &__message
-    font bold 47px/47px Arial, sans-serif
+    font bold 47px / 47px Arial, sans-serif
     & span
       display inline-block
     & span:nth-child(1)
@@ -102,13 +112,13 @@
   &__action
     background linear-gradient(45deg, #19668d 0%, #22ab93 100%)
     border none
-    box-shadow 1px 1px 5px 0 rgba(0,0,0,0.5)
+    box-shadow 1px 1px 5px 0 rgba(0, 0, 0, 0.5)
     color #fff
-    font 42px/47px Arial, sans-serif
+    font 42px / 47px Arial, sans-serif
     padding 20px 40px
 
     &:hover
-      opacity  .9
+      opacity .9
 
     &:active
       opacity 1

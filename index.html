@@ -9,7 +9,7 @@
 <body class="game">
     <h1 class="game__header">Memoji</h1>
     <section id="memoji" class="game__body"></section>
-    <time id="timer" class="game__header">00-00</time>
+    <time id="timer" class="game__timer">00-00</time>
 
     <script>
         var opt = {
@@ -17,12 +17,12 @@
             timerElement: document.getElementById("timer"),
             classCard: "game__item",
             openCardClass: "game__item_type_open",
-            timeRound: 60,
+            timeRound: 1,
             roundSuccessClass: "game__item_round_success",
             roundErrorClass: "game__item_round_error",
         };
         // memoji(opt)
-        new Game(opt)
+        var a = new Game(opt)
     </script>
 </body>
 </html>

@@ -70,11 +70,17 @@
   border-color: #f44336;
   transition: background-color 1s, border-color 1s;
 }
+.game__timer {
+  display: block;
+  font: 32px/36px Arial, sans-serif;
+  margin-top: 30px;
+  text-align: center;
+}
 .modal {
   align-items: center;
   background: rgba(0,0,0,0.5);
   bottom: 0;
-  display: flex;
+  display: none;
   justify-content: center;
   left: 0;
   min-height: inherit;
@@ -82,6 +88,9 @@
   position: absolute;
   right: 0;
   top: 0;
+}
+.modal_type_open {
+  display: flex;
 }
 .modal__container {
   background: #fff;

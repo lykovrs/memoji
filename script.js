@@ -1,26 +1,14 @@
+/**
+ * Создает игру Эмоджи
+ * @param options объект опций игры
+ * @constructor
+ */
 function Game(options) {
   // генерируем пары
   this._emojies = this.generateCouple(["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"]);
-  // Счетчик времени игры
-  this._timeCounter = 0;
-  // Перемешиваем массив
-  this.mixCards(this._emojies);
-  // Добавляем рандомную последовательность карточек на страницу
-  this._collection = this._emojies.map(function(item) {
-    var element = document.createElement("article");
-    element.dataset.card = "";
-    element.classList.add(options.classCard);
-    element.dataset.emoji = item.icon;
-    element.dataset.emojiId = item.id;
-    options.rootElement.appendChild(element);
-    return element;
-  });
-  // для принятия решения нужно знать хотябы последне три корректных хода
-  this._history = {
-    first: null,
-    second: null,
-    third: null,
-  };
+
+  // рендерим карточки и начинаем игру
+  this.start(options);
 
   // делегируем клик
   options.rootElement.addEventListener(
@@ -121,6 +109,31 @@ function Game(options) {
 }
 
 /**
+ * Стартует сессию игры
+ * @param options объект опций игры
+ */
+Game.prototype.start = function(options) {
+  // подчищаем старые краточки, если они есть
+  options.rootElement.innerHTML = null;
+  // Счетчик времени игры
+  this._timeCounter = 0;
+  // перемешиваем массив
+  this.mixCards(this._emojies);
+  // Добавляем рандомную последовательность карточек на страницу
+  this._collection = this._emojies.map(function(item) {
+    var element = new EmojiNode(item, options.classCard);
+    options.rootElement.appendChild(element);
+    return element;
+  });
+  // для принятия решения нужно знать хотябы последне три корректных хода
+  this._history = {
+    first: null,
+    second: null,
+    third: null,
+  };
+};
+
+/**
  * Вчисляет разницу между двумя объектами с разными id
  * @param firsId id первого объекта
  * @param secondId id второго объекта
@@ -204,3 +217,71 @@ function Emoji(icon, id) {
   this.icon = icon;
   this.id = id;
 }
+
+/**
+ * Создает HTML-элемент Эмоджи
+ * @param item сущьность Emoji
+ * @param cls класс, обозначающий элемент
+ * @returns {HTMLElement}
+ * @constructor
+ */
+function EmojiNode(item, cls) {
+  var element = document.createElement("article");
+  element.dataset.card = "";
+  element.classList.add(cls);
+  element.dataset.emoji = item.icon;
+  element.dataset.emojiId = item.id;
+
+  return element;
+}
+
+/**
+ * Конструктор модального окна
+ * @constructor
+ */
+function Modal() {
+  this._button = document.createElement("button");
+  this._button.classList.add("modal__action");
+
+  this._message = document.createElement("h2");
+  this._message.classList.add("modal__message");
+
+  var container = document.createElement("article");
+  container.classList.add("modal__container");
+
+  container.appendChild(this._message);
+  container.appendChild(this._button);
+
+  this._overlay = document.createElement("div");
+  this._overlay.classList.add("modal");
+
+  this._overlay.appendChild(container);
+  document.body.appendChild(this._overlay);
+}
+
+/**
+ * Открывает окно
+ * @param text заголовок
+ * @param buttonText текст на кнопке
+ * @param callback функция обратного вызова на кнопке
+ */
+Modal.prototype.open = function(text, buttonText, callback) {
+  this._button.addEventListener("click", callback, false);
+
+  this._button.innerText = buttonText;
+
+  this._message.innerHTML = text;
+
+  this._overlay.classList.add("modal_type_open");
+};
+
+/**
+ * Закрывает окно
+ * @param callback убирает обработчик события
+ */
+Modal.prototype.close = function(callback) {
+  this._overlay.classList.remove("modal_type_open");
+  this._button.removeEventListener("click", callback, false);
+  this._button.innerText = null;
+  this._message.innerHTML = null;
+};
