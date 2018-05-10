@@ -137,7 +137,12 @@ function Game(options) {
  */
 Game.prototype.start = function() {
   // чистим таймеры, если остались
-  if (this._timerId) clearInterval(this._timerId);
+  if (this._timerId) {
+      clearInterval(this._timerId);
+      this._timerId = null;
+  }
+
+  this._options.timerElement.innerHTML = null;
 
   // подчищаем старые краточки, если они есть
   this._options.rootElement.innerHTML = null;
