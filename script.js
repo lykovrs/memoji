@@ -184,6 +184,7 @@ Game.prototype._startRound = function() {
   this._timerId = setInterval(
     function() {
       if (!this._timeCounter) {
+        clearInterval(this._timerId)
         // проверяем результат
         var result = this._calculateResult(this._options.roundSuccessClass);
         var opts = this._options;
@@ -199,7 +200,11 @@ Game.prototype._startRound = function() {
             modal.close(self.start);
           });
         }
+
+
       }
+      var timerElement = this._options.timerElement
+        renderTime(timerElement, this._timeCounter)
       this._timeCounter--;
     }.bind(this),
     1000,
@@ -345,3 +350,12 @@ Modal.prototype.close = function(callback) {
   this._button.innerText = null;
   this._message.innerHTML = null;
 };
+
+/**
+ * Отображает строку отсчета
+ * @param element элемент, содержимое которого обновляем
+ * @param time обновляемое значение
+ */
+function renderTime(element, time) {
+    element.innerHTML = "00-" + (+time < 10 ? "0" + time : time);
+}
