@@ -5,7 +5,7 @@
  */
 function Game(options) {
   // генерируем пары
-  this._emojies = this.generateCouple(["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"]);
+  this._emojies = this._generateCouple(["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"]);
 
   // рендерим карточки и начинаем игру
   this.start(options);
@@ -26,10 +26,10 @@ function Game(options) {
         // повторынй клик по одной из открытых карт
         if (control === history.first || control === history.second) {
           // закрываем крату
-          this.cardClose(control, options.openCardClass);
+          this._cardClose(control, options.openCardClass);
           // обновляем очередь
           if (control === history.first) {
-            // убираем подсветку первого кондрола
+            // убираем подсветку первого контрола
             history.first.classList.remove(options.roundErrorClass);
 
             if (history.second) {
@@ -55,15 +55,15 @@ function Game(options) {
         if (history.first && history.second) {
           // закрываем карточки, если проверка не пройдена и удаляем подсветку
           if (
-            !this.calculateMove(
+            !this._calculateMove(
               history.first.dataset.emojiId,
               history.second.dataset.emojiId,
             )
           ) {
             history.first.classList.remove(options.roundErrorClass);
             history.second.classList.remove(options.roundErrorClass);
-            this.cardClose(history.first, options.openCardClass);
-            this.cardClose(history.second, options.openCardClass);
+            this._cardClose(history.first, options.openCardClass);
+            this._cardClose(history.second, options.openCardClass);
           }
           // чистим очередь
           history.first = null;
@@ -75,7 +75,7 @@ function Game(options) {
           // сохораняем первый клик
           history.first = control;
           // открываем карточку
-          this.cardOpen(control, options.openCardClass);
+          this._cardOpen(control, options.openCardClass);
           return;
         }
 
@@ -83,10 +83,10 @@ function Game(options) {
           // сохранение клика второго значения
           history.second = control;
           // открываем карточку
-          this.cardOpen(control, options.openCardClass);
+          this._cardOpen(control, options.openCardClass);
           // проверка валидации и присвоение класса
           if (
-            this.calculateMove(
+            this._calculateMove(
               history.first.dataset.emojiId,
               history.second.dataset.emojiId,
             )
@@ -94,18 +94,31 @@ function Game(options) {
             // подсвечиваем успех
             history.first.classList.add(options.roundSuccessClass);
             history.second.classList.add(options.roundSuccessClass);
+
+            // проверяем результат
+            var result = this._calculateResult(options.roundSuccessClass);
+            // если все карты открыты
+            if (result) {
+              var self = this;
+              modal.open("Play again", "Win", function() {
+                // делаем рестарт
+                self.start(options);
+                // закрываем модалку
+                modal.close(self.start)
+              });
+            }
           } else {
             // подсвечиваем ошибку
             history.first.classList.add(options.roundErrorClass);
             history.second.classList.add(options.roundErrorClass);
           }
-          return;
         }
-
-        console.log(history);
       }
     }.bind(this),
   );
+
+  // создаем каркас модального окна
+  var modal = new Modal();
 }
 
 /**
@@ -118,7 +131,7 @@ Game.prototype.start = function(options) {
   // Счетчик времени игры
   this._timeCounter = 0;
   // перемешиваем массив
-  this.mixCards(this._emojies);
+  this._mixCards(this._emojies);
   // Добавляем рандомную последовательность карточек на страницу
   this._collection = this._emojies.map(function(item) {
     var element = new EmojiNode(item, options.classCard);
@@ -139,7 +152,7 @@ Game.prototype.start = function(options) {
  * @param secondId id второго объекта
  * @returns {boolean}
  */
-Game.prototype.calculateMove = function(firsId, secondId) {
+Game.prototype._calculateMove = function(firsId, secondId) {
   var currentEmojies = this._emojies.filter(function(item) {
     return item.id === firsId || item.id == secondId;
   });
@@ -158,7 +171,7 @@ Game.prototype.calculateMove = function(firsId, secondId) {
  * @param arr массив строк с эмоджи
  * @returns {*} массив объектов Emoji
  */
-Game.prototype.generateCouple = function(arr) {
+Game.prototype._generateCouple = function(arr) {
   return arr.reduce(function(previousValue, currentValue, currentIndex) {
     return previousValue.concat([
       new Emoji(currentValue, "first-" + currentIndex),
@@ -172,7 +185,7 @@ Game.prototype.generateCouple = function(arr) {
  * @param array входной массив
  * @returns {*}
  */
-Game.prototype.mixCards = function(array) {
+Game.prototype._mixCards = function(array) {
   var currentIndex = array.length,
     temporaryValue,
     randomIndex;
@@ -194,7 +207,7 @@ Game.prototype.mixCards = function(array) {
  * @param card элемент карточки
  * @param openCardClass добавляемы класс
  */
-Game.prototype.cardOpen = function(card, openCardClass) {
+Game.prototype._cardOpen = function(card, openCardClass) {
   card.classList.add(openCardClass);
 };
 
@@ -203,8 +216,19 @@ Game.prototype.cardOpen = function(card, openCardClass) {
  * @param card элемент карточки
  * @param openCardClass удаляемый класс
  */
-Game.prototype.cardClose = function(card, openCardClass) {
+Game.prototype._cardClose = function(card, openCardClass) {
   card.classList.remove(openCardClass);
+};
+
+/**
+ * Вычисляет результат игры
+ * @param cls класс-признак отыграной карты
+ * @returns {boolean}
+ */
+Game.prototype._calculateResult = function(cls) {
+  return this._collection.every(function(item) {
+    return item.classList.contains(cls);
+  });
 };
 
 /**
@@ -248,14 +272,13 @@ function Modal() {
 
   var container = document.createElement("article");
   container.classList.add("modal__container");
-
   container.appendChild(this._message);
   container.appendChild(this._button);
 
   this._overlay = document.createElement("div");
   this._overlay.classList.add("modal");
-
   this._overlay.appendChild(container);
+
   document.body.appendChild(this._overlay);
 }
 
@@ -267,11 +290,8 @@ function Modal() {
  */
 Modal.prototype.open = function(text, buttonText, callback) {
   this._button.addEventListener("click", callback, false);
-
   this._button.innerText = buttonText;
-
   this._message.innerHTML = text;
-
   this._overlay.classList.add("modal_type_open");
 };
 
