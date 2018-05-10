@@ -109,9 +109,9 @@ function Game(options) {
             var result = this._calculateResult(options.roundSuccessClass);
             // если все карты открыты
             if (result) {
-              clearInterval(this._timerId)
+              clearInterval(this._timerId);
               var self = this;
-              self._modal.open("Win","Play again",  function() {
+              self._modal.open("Win", "Play again", function() {
                 // делаем рестарт
                 self.start(options);
                 // закрываем модалку
@@ -138,16 +138,16 @@ function Game(options) {
 Game.prototype.start = function() {
   // чистим таймеры, если остались
   if (this._timerId) {
-      clearInterval(this._timerId);
-      this._timerId = null;
+    clearInterval(this._timerId);
+    this._timerId = null;
   }
 
-  this._options.timerElement.innerHTML = null;
+  this._options.timerElement.innerHTML = "01-00";
 
   // подчищаем старые краточки, если они есть
   this._options.rootElement.innerHTML = null;
   // Счетчик времени игры
-  this._timeCounter = this._options.timeRound - 1;
+  this._timeCounter = 59;
   // перемешиваем массив
   this._mixCards(this._emojies);
   // Добавляем рандомную последовательность карточек на страницу

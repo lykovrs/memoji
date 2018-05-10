@@ -78,17 +78,22 @@
   align-items center
   background rgba(#000, .5)
   bottom 0
-  display none
+  display flex
   justify-content center
   left 0
   min-height inherit
   min-width inherit
+  opacity 0
   position absolute
   right 0
   top 0
+  transition visibility 0s, opacity 0.5s linear
+  visibility hidden
 
   &_type_open
-    display flex
+    opacity 1
+    visibility visible
+
 
   &__container
     background #fff

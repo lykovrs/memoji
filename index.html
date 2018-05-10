@@ -10,18 +10,16 @@
     <h1 class="game__header">Memoji</h1>
     <section id="memoji" class="game__body"></section>
     <time id="timer" class="game__timer"></time>
-
     <script>
         var opt = {
             rootElement: document.getElementById("memoji"),
             timerElement: document.getElementById("timer"),
             classCard: "game__item",
             openCardClass: "game__item_type_open",
-            timeRound: 60,
             roundSuccessClass: "game__item_round_success",
             roundErrorClass: "game__item_round_error",
         };
-        var a = new Game(opt)
+        new Game(opt)
     </script>
 </body>
 </html>
