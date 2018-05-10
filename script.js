@@ -27,6 +27,9 @@ function Game(options) {
         var control = ev.target;
         var id = control.dataset.emojiId;
 
+        // начинаем раунд игры, по первому клику по карточке
+        if (!this._timerId) this._startRound();
+
         // если карта отыграна, не  реагируем на клик
         if (control.classList.contains(options.roundSuccessClass)) return;
 
@@ -106,8 +109,9 @@ function Game(options) {
             var result = this._calculateResult(options.roundSuccessClass);
             // если все карты открыты
             if (result) {
+              clearInterval(this._timerId)
               var self = this;
-              self._modal.open("Play again", "Win", function() {
+              self._modal.open("Win","Play again",  function() {
                 // делаем рестарт
                 self.start(options);
                 // закрываем модалку
@@ -138,7 +142,7 @@ Game.prototype.start = function() {
   // подчищаем старые краточки, если они есть
   this._options.rootElement.innerHTML = null;
   // Счетчик времени игры
-  this._timeCounter = this._options.timeRound;
+  this._timeCounter = this._options.timeRound - 1;
   // перемешиваем массив
   this._mixCards(this._emojies);
   // Добавляем рандомную последовательность карточек на страницу
@@ -155,9 +159,6 @@ Game.prototype.start = function() {
     second: null,
     third: null,
   };
-
-  // начинаем раунд игры
-  this._startRound();
 };
 
 /**
@@ -184,7 +185,7 @@ Game.prototype._startRound = function() {
   this._timerId = setInterval(
     function() {
       if (!this._timeCounter) {
-        clearInterval(this._timerId)
+        clearInterval(this._timerId);
         // проверяем результат
         var result = this._calculateResult(this._options.roundSuccessClass);
         var opts = this._options;
@@ -193,18 +194,16 @@ Game.prototype._startRound = function() {
 
         // если все карты открыты
         if (!result) {
-          this._modal.open( "Lose","Try again", function() {
+          this._modal.open("Lose", "Try again", function() {
             // делаем рестарт
             self.start(opts);
             // закрываем модалку
             modal.close(self.start);
           });
         }
-
-
       }
-      var timerElement = this._options.timerElement
-        renderTime(timerElement, this._timeCounter)
+      var timerElement = this._options.timerElement;
+      renderTime(timerElement, this._timeCounter);
       this._timeCounter--;
     }.bind(this),
     1000,
@@ -336,11 +335,11 @@ function Modal() {
 Modal.prototype.open = function(text, buttonText, callback) {
   this._button.addEventListener("click", callback, false);
   this._button.innerText = buttonText;
-    var decorationText = text
-        .split("")
-        .reduce(function(previousValue, currentValue) {
-            return previousValue + "<span>" + currentValue + "</span>";
-        }, "");
+  var decorationText = text
+    .split("")
+    .reduce(function(previousValue, currentValue) {
+      return previousValue + "<span>" + currentValue + "</span>";
+    }, "");
   this._message.innerHTML = decorationText;
   this._overlay.classList.add("modal_type_open");
 };
@@ -362,5 +361,5 @@ Modal.prototype.close = function(callback) {
  * @param time обновляемое значение
  */
 function renderTime(element, time) {
-    element.innerHTML = "00-" + (+time < 10 ? "0" + time : time);
+  element.innerHTML = "00-" + (+time < 10 ? "0" + time : time);
 }
