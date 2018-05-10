@@ -4,8 +4,15 @@
  * @constructor
  */
 function Game(options) {
+  this._options = options;
   // генерируем пары
   this._emojies = this._generateCouple(["🦀", "🐟", "🐊", "🐓", "🦃", "🐿"]);
+
+  // здесь храним id таймера для рау
+  this._timerId = null;
+
+  // модадльное окно
+  this._modal = null;
 
   // рендерим карточки и начинаем игру
   this.start(options);
@@ -100,11 +107,11 @@ function Game(options) {
             // если все карты открыты
             if (result) {
               var self = this;
-              modal.open("Play again", "Win", function() {
+              self._modal.open("Play again", "Win", function() {
                 // делаем рестарт
                 self.start(options);
                 // закрываем модалку
-                modal.close(self.start)
+                self._modal.close(self.start);
               });
             }
           } else {
@@ -118,24 +125,28 @@ function Game(options) {
   );
 
   // создаем каркас модального окна
-  var modal = new Modal();
+  this._modal = new Modal();
 }
 
 /**
  * Стартует сессию игры
- * @param options объект опций игры
  */
-Game.prototype.start = function(options) {
+Game.prototype.start = function() {
+  // чистим таймеры, если остались
+  if (this._timerId) clearInterval(this._timerId);
+
   // подчищаем старые краточки, если они есть
-  options.rootElement.innerHTML = null;
+  this._options.rootElement.innerHTML = null;
   // Счетчик времени игры
-  this._timeCounter = 0;
+  this._timeCounter = this._options.timeRound;
   // перемешиваем массив
   this._mixCards(this._emojies);
   // Добавляем рандомную последовательность карточек на страницу
+  var openCls = this._options.classCard;
+  var root = this._options.rootElement;
   this._collection = this._emojies.map(function(item) {
-    var element = new EmojiNode(item, options.classCard);
-    options.rootElement.appendChild(element);
+    var element = new EmojiNode(item, openCls);
+    root.appendChild(element);
     return element;
   });
   // для принятия решения нужно знать хотябы последне три корректных хода
@@ -144,6 +155,9 @@ Game.prototype.start = function(options) {
     second: null,
     third: null,
   };
+
+  // начинаем раунд игры
+  this._startRound();
 };
 
 /**
@@ -164,6 +178,32 @@ Game.prototype._calculateMove = function(firsId, secondId) {
   }
 
   return false;
+};
+
+Game.prototype._startRound = function() {
+  this._timerId = setInterval(
+    function() {
+      if (!this._timeCounter) {
+        // проверяем результат
+        var result = this._calculateResult(this._options.roundSuccessClass);
+        var opts = this._options;
+        var modal = this._modal;
+        var self = this;
+
+        // если все карты открыты
+        if (!result) {
+          this._modal.open("Try again", "Lose", function() {
+            // делаем рестарт
+            self.start(opts);
+            // закрываем модалку
+            modal.close(self.start);
+          });
+        }
+      }
+      this._timeCounter--;
+    }.bind(this),
+    1000,
+  );
 };
 
 /**
