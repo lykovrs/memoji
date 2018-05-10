@@ -193,7 +193,7 @@ Game.prototype._startRound = function() {
 
         // если все карты открыты
         if (!result) {
-          this._modal.open("Try again", "Lose", function() {
+          this._modal.open( "Lose","Try again", function() {
             // делаем рестарт
             self.start(opts);
             // закрываем модалку
@@ -336,7 +336,12 @@ function Modal() {
 Modal.prototype.open = function(text, buttonText, callback) {
   this._button.addEventListener("click", callback, false);
   this._button.innerText = buttonText;
-  this._message.innerHTML = text;
+    var decorationText = text
+        .split("")
+        .reduce(function(previousValue, currentValue) {
+            return previousValue + "<span>" + currentValue + "</span>";
+        }, "");
+  this._message.innerHTML = decorationText;
   this._overlay.classList.add("modal_type_open");
 };
 
