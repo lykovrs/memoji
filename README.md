@@ -4,4 +4,8 @@
 
 Ситль исполнениея: ES5, CSS3(без использования стороннего кода)
 
-https://www.coursera.org/learn/razrabotka-interfeysov-proyekt
+[ссылка на курс](https://www.coursera.org/learn/razrabotka-interfeysov-proyekt)
+
+[github pages](https://lykovrs.github.io/memoji/)
+
+
