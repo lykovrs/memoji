@@ -6,6 +6,6 @@
 
 [ссылка на курс](https://www.coursera.org/learn/razrabotka-interfeysov-proyekt)
 
-[github pages](https://lykovrs.github.io/memoji/)
+[рабочий код на github pages](https://lykovrs.github.io/memoji/)
 
 
